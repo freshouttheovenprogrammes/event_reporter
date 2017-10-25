@@ -18,7 +18,7 @@ class EventReporter
 
   def search(attribute, criteria)
     load.each do |row|
-      result = row([attribute.to_sym][criteria.to_s]).downcase
+      result = row([attribute.to_sym][criteria.to_sym]).downcase
       # here I'm wanting it to first iterate through the csv thats been established and found in the load method
       # then I'm trying to pull a result that depends on the arguements attribute and criteria which I've converted into :symbols
     end
