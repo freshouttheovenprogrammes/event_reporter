@@ -19,20 +19,51 @@ class EventReporterRunnerTest < Minitest::Test
 
   def test_that_queue_is_empty
     event_reporter = EventReporter.new
+
     assert_equal [], event_reporter.queue
   end
 
   def test_that_it_can_read_csv_file
     event_reporter = EventReporter.new
     expected = event_reporter.load
+
     assert_instance_of CSV, expected
   end
 
   def test_that_its_searching_first_name_and_that_it_appears_in_downcase
     event_reporter = EventReporter.new
-    # getting error which is posted after test class ends
-    assert "allison", event_reporter.search(:first_name, "allison")
+    expected = event_reporter.load
 
+    assert event_reporter.search(:first_name, "allison")
+  end
+
+  def test_first_name_search_finds_something_other_than_first_result_in_file
+    event_reporter = EventReporter.new
+    expected = event_reporter.load
+
+    assert event_reporter.search(:first_name, "aya")
+  end
+
+  def test_last_name_search_finds_last_name_deep_in_csv_file
+    event_reporter = EventReporter.new
+    expected = event_reporter.load
+
+    assert event_reporter.search(:last_name, "Baimas-George")
+  end
+
+  def test_that_its_searching_first_name_and_that_it_doesnt_appear
+    event_reporter = EventReporter.new
+    expected = event_reporter.load
+
+    refute event_reporter.search(:first_name, "yves")
+  end
+
+  def test_that_queue_holds_data_from_search
+    event_reporter = EventReporter.new
+    event_reporter.load
+    event_reporter.search(:first_name, "allison")
+
+    refute event_reporter.queue.empty?
   end
 
 end

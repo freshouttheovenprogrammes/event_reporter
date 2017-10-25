@@ -1,5 +1,6 @@
 require_relative 'queue'
 require 'csv'
+require 'pry'
 
 class EventReporter
 
@@ -12,17 +13,32 @@ class EventReporter
   end
 
   def load(filename = @filename)
-    contents = CSV.open filename, headers: true,
+    # will need more flexibility when coming to what files I can load.
+    # ask about a splat on the arguement filename
+      # if filename == empty
+      #   filename == @filename
+      # end
+    @contents = CSV.open filename, headers: true,
     header_converters: :symbol
   end
 
   def search(attribute, criteria)
-    load.each do |row|
-      result = row([attribute.to_sym][criteria.to_sym]).downcase
-      # here I'm wanting it to first iterate through the csv thats been established and found in the load method
-      # then I'm trying to pull a result that depends on the arguements attribute and criteria which I've converted into :symbols
+    found = false
+    @contents.each do |row|
+      # this is parsing thru csv and returning "true" if condition is met
+      # and "false if nothing met"
+      if row[attribute.to_sym].downcase == criteria.to_s.downcase
+
+        # If a result is found, I need to shovel the result into the queue.
+        # Need a variable for found results
+
+        queue << row
+        found = true
+
+        # return true
+      end
     end
-    return result
+    return found
   end
 
 
