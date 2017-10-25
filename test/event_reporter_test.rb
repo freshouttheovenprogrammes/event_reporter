@@ -34,50 +34,69 @@ class EventReporterRunnerTest < Minitest::Test
     event_reporter = EventReporter.new
     expected = event_reporter.load
 
-    assert event_reporter.search(:first_name, "allison")
+    assert event_reporter.find(:first_name, "allison")
   end
 
   def test_first_name_search_finds_something_other_than_first_result_in_file
     event_reporter = EventReporter.new
     expected = event_reporter.load
 
-    assert event_reporter.search(:first_name, "aya")
+    assert event_reporter.find(:first_name, "aya")
   end
 
   def test_last_name_search_finds_last_name_deep_in_csv_file
     event_reporter = EventReporter.new
     expected = event_reporter.load
 
-    assert event_reporter.search(:last_name, "Baimas-George")
+    assert event_reporter.find(:last_name, "Baimas-George")
   end
 
   def test_that_its_searching_first_name_and_that_it_doesnt_appear
     event_reporter = EventReporter.new
     expected = event_reporter.load
 
-    refute event_reporter.search(:first_name, "yves")
+    refute event_reporter.find(:first_name, "yves")
+  end
+
+  def test_that_finding_state
+      event_reporter = EventReporter.new
+      event_reporter.load
+
+      assert event_reporter.find(:state, "CA")
   end
 
   def test_that_queue_holds_data_from_search
     event_reporter = EventReporter.new
     event_reporter.load
-    event_reporter.search(:first_name, "allison")
+    event_reporter.find(:first_name, "allison")
 
     refute event_reporter.queue.empty?
   end
 
+  def test_that_the_queue_can_be_counted
+    # queue = Queue.new
+    event_reporter = EventReporter.new
+    event_reporter.load
+    event_reporter.find(:first_name, "mary")
+    assert_equal 16, event_reporter.queue.count
+  end
+
+  def test_that_queue_can_be_cleared
+    event_reporter = EventReporter.new
+    event_reporter.load
+    event_reporter.find(:first_name, "mary")
+    event_reporter.queue.clear
+
+    assert event_reporter.queue.empty?
+  end
+
+  def test_what_printed_queue_looks_like
+    event_reporter = EventReporter.new
+    event_reporter.load
+    event_reporter.find(:first_name, "mary")
+
+
+    assert_equal "", event_reporter.queue_print
+  end
+
 end
-
-=begin
-1) Error:
-EventReporterRunnerTest#test_that_its_searching_first_name_and_that_it_appears_in_downcase:
-TypeError: no implicit conversion of Symbol into Integer
-   /Users/zacharypalmquist/turing/1module/event_reporter/lib/event_reporter.rb:21:in `[]'
-   /Users/zacharypalmquist/turing/1module/event_reporter/lib/event_reporter.rb:21:in `block in search'
-   /Users/zacharypalmquist/.rvm/rubies/ruby-2.4.2/lib/ruby/2.4.0/csv.rb:1771:in `each'
-   /Users/zacharypalmquist/turing/1module/event_reporter/lib/event_reporter.rb:20:in `search'
-   ./test/event_reporter_test.rb:34:in `test_that_its_searching_first_name_and_that_it_appears_in_downcase'
-
-5 runs, 4 assertions, 0 failures, 1 errors, 0 skips
-
-=end

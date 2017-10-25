@@ -1,6 +1,7 @@
-require_relative 'event_reporter'
+require './lib/event_reporter'
 
 class Queue
+
 
 
 
