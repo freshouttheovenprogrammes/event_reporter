@@ -1,36 +1,33 @@
-require_relative 'queue'
+
 require 'csv'
 require 'pry'
 
 class EventReporter
 
-  attr_reader :queue, :filename, :contents
+
+  attr_reader :queue, :filename
 
   def initialize
     @queue    = []
     @filename = './lib/full_event_attendees.csv'
-    @contents = contents
+    @attendees = []
   end
 
   def load(filename = @filename)
-    # will need more flexibility when coming to what files I can load.
-    # ask about a splat on the arguement filename
-      # if filename == empty
-      #   filename == @filename
-      # end
-    @contents = CSV.open filename, headers: true,
+    contents = CSV.open filename, headers: true,
     header_converters: :symbol
+    contents.each do |row|
+      @attendees << row
+    end
   end
 
   def find(attribute, criteria)
-    found = false
-    @contents.each do |row|
-      if row[attribute.to_sym].downcase == criteria.to_s.downcase
-        add_to_queue(row)
-        found = true
+    queue_clear
+    @attendees.map do |row|
+      if row[attribute.to_sym].to_s.downcase == criteria.to_s.downcase
+        @queue << row
       end
     end
-    return found
   end
 
   def add_to_queue(row)
@@ -46,16 +43,17 @@ class EventReporter
   end
 
   def queue_print
-    puts " LAST NAME  FIRST NAME  EMAIL  ZIPCODE  CITY  STATE  ADDRESS  PHONE"
     puts @queue
   end
 
+  # def clean_zipcodes
+  #   if zipcode.length < 5
+  #  zipcode = zipcode.rjust 5, "0"
+  #   elsif zipcode.length > 5
+  #  zipcode = zipcode[0..4]
+  #   else zipcode.nil
+  #  zipcode = "00000"
+  #   end
+  # end
+
 end
-
-
-=begin
-So, will I need to seperate my queue methods into my queue class?
-It makes sense to me to leave the queue initialized as empty in the event_reporter
-and then make sure that event_reporter has access to queue (through requirements)
-to be able to call the methods in queue.rb.
-=end
