@@ -1,29 +1,59 @@
-require_relative 'queue'
+
 require 'csv'
+require 'pry'
 
 class EventReporter
 
-  attr_reader :queue, :filename, :contents
+
+  attr_reader :queue, :filename
 
   def initialize
     @queue    = []
     @filename = './lib/full_event_attendees.csv'
-    @contents = contents
+    @attendees = []
   end
 
   def load(filename = @filename)
     contents = CSV.open filename, headers: true,
     header_converters: :symbol
-  end
-
-  def search(attribute, criteria)
-    load.each do |row|
-      result = row([attribute.to_sym][criteria.to_s]).downcase
-      # here I'm wanting it to first iterate through the csv thats been established and found in the load method
-      # then I'm trying to pull a result that depends on the arguements attribute and criteria which I've converted into :symbols
+    contents.each do |row|
+      @attendees << row
     end
-    return result
   end
 
+  def find(attribute, criteria)
+    queue_clear
+    @attendees.map do |row|
+      if row[attribute.to_sym].to_s.downcase == criteria.to_s.downcase
+        @queue << row
+      end
+    end
+  end
+
+  def add_to_queue(row)
+    @queue << row
+  end
+
+  def queue_count
+    @queue.count
+  end
+
+  def queue_clear
+    @queue.clear
+  end
+
+  def queue_print
+    puts @queue
+  end
+
+  # def clean_zipcodes
+  #   if zipcode.length < 5
+  #  zipcode = zipcode.rjust 5, "0"
+  #   elsif zipcode.length > 5
+  #  zipcode = zipcode[0..4]
+  #   else zipcode.nil
+  #  zipcode = "00000"
+  #   end
+  # end
 
 end

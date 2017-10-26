@@ -1,3 +1,4 @@
+require './lib/help'
 require './lib/event_reporter'
 require 'minitest/autorun'
 require 'minitest/pride'
@@ -19,6 +20,7 @@ class EventReporterRunnerTest < Minitest::Test
 
   def test_that_queue_is_empty
     event_reporter = EventReporter.new
+
     assert_equal [], event_reporter.queue
   end
 
@@ -30,22 +32,17 @@ class EventReporterRunnerTest < Minitest::Test
 
   def test_that_its_searching_first_name_and_that_it_appears_in_downcase
     event_reporter = EventReporter.new
-    # getting error which is posted after test class ends
-    assert "allison", event_reporter.search(:first_name, "allison")
+    event_reporter.load
 
+    assert "allison", event_reporter.find(:first_name, "allison")
+
+    assert_equal "", event_reporter.queue_print
+  end
+
+  def test_that_queue_prints
+    event_reporter = EventReporter.new
+
+    refute event_reporter.queue.empty?
   end
 
 end
-
-=begin
-
-1) Error:
-EventReporterRunnerTest#test_that_its_searching_first_name_and_that_it_appears_in_downcase:
-TypeError: no implicit conversion of String into Integer
-    /Users/zacharypalmquist/turing/1module/event_reporter/lib/event_reporter.rb:21:in `[]'
-    /Users/zacharypalmquist/turing/1module/event_reporter/lib/event_reporter.rb:21:in `block in search'
-    /Users/zacharypalmquist/.rvm/rubies/ruby-2.4.2/lib/ruby/2.4.0/csv.rb:1771:in `each'
-    /Users/zacharypalmquist/turing/1module/event_reporter/lib/event_reporter.rb:20:in `search'
-    ./test/event_reporter_test.rb:34:in `test_that_its_searching_first_name_and_that_it_appears_in_downcase'
-
-=end
