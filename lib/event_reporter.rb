@@ -46,14 +46,4 @@ class EventReporter
     puts @queue
   end
 
-  # def clean_zipcodes
-  #   if zipcode.length < 5
-  #  zipcode = zipcode.rjust 5, "0"
-  #   elsif zipcode.length > 5
-  #  zipcode = zipcode[0..4]
-  #   else zipcode.nil
-  #  zipcode = "00000"
-  #   end
-  # end
-
 end
